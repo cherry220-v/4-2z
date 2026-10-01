@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title|default:"Профиль" }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+
+            <div class="card profile-card shadow-sm">
+                <div class="card-header profile-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-circle mr-2"></i>
+                        Профиль
+                    </h4>
+                </div>
+
+                <div class="card-body">
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="row">
+
+                        <!-- Аватар -->
+                        <div class="col-md-4 text-center mb-4 mb-md-0">
+                            <div class="profile-avatar-wrapper">
+
+                                {% if user.avatar %}
+                                    <img
+                                        src="{{ user.avatar.url }}"
+                                        alt="Аватар {{ user.username }}"
+                                        class="profile-avatar"
+                                    >
+                                {% else %}
+                                    <div class="profile-avatar profile-avatar-placeholder">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+                            <h5 class="profile-username mt-3 mb-1">
+                                {{ user.username }}
+                            </h5>
+
+                            {% if user.email %}
+                                <div class="profile-email text-muted">
+                                    {{ user.email }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Форма -->
+                        <div class="col-md-8">
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+
+                                <!-- Username -->
+                                <div class="form-group">
+                                    <label for="{{ form.username.id_for_label }}">
+                                        {{ form.username.label }}
+                                    </label>
+
+                                    {{ form.username }}
+
+                                    {% if form.username.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.username.errors %}
+                                                <div>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Avatar -->
+                                <div class="form-group">
+                                    <label for="{{ form.avatar.id_for_label }}">
+                                        {{ form.avatar.label }}
+                                    </label>
+
+                                    {{ form.avatar }}
+
+                                    {% if form.avatar.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.avatar.errors %}
+                                                <div>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+
+                                    <small class="form-text text-muted">
+                                        Выберите новое изображение для аватара.
+                                    </small>
+                                </div>
+
+                                <div class="profile-actions mt-4">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save mr-1"></i>
+                                        Сохранить изменения
+                                    </button>
+                                </div>
+
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block extra_css %}
+<style>
+    .profile-card {
+        border: 1px solid #dee2e6;
+        border-radius: .5rem;
+        background-color: #fff;
+        color: #212529;
+        transition:
+            background-color .2s ease,
+            border-color .2s ease,
+            color .2s ease;
+    }
+
+    .profile-header {
+        background-color: #fff;
+        border-bottom: 1px solid #dee2e6;
+        color: #212529;
+        transition:
+            background-color .2s ease,
+            border-color .2s ease,
+            color .2s ease;
+    }
+
+    .profile-avatar-wrapper {
+        display: flex;
+        justify-content: center;
+    }
+
+    .profile-avatar {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #dee2e6;
+        transition: border-color .2s ease;
+    }
+
+    .profile-avatar-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #e9ecef;
+        color: #6c757d;
+        font-size: 4rem;
+    }
+
+    .profile-username {
+        color: #212529;
+        font-weight: 600;
+    }
+
+    .profile-email {
+        word-break: break-word;
+    }
+
+    .profile-actions {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+
+    /* =========================
+       DARK THEME
+       ========================= */
+
+    body.dark-theme .profile-card {
+        background-color: #242628;
+        border-color: #343a40;
+        color: #e9ecef;
+    }
+
+    body.dark-theme .profile-header {
+        background-color: #242628;
+        border-bottom-color: #343a40;
+        color: #e9ecef;
+    }
+
+    body.dark-theme .profile-avatar {
+        border-color: #495057;
+    }
+
+    body.dark-theme .profile-avatar-placeholder {
+        background-color: #343a40;
+        color: #adb5bd;
+    }
+
+    body.dark-theme .profile-username {
+        color: #f1f3f5;
+    }
+
+    body.dark-theme .form-control {
+        background-color: #2b2f32;
+        border-color: #495057;
+        color: #e9ecef;
+    }
+
+    body.dark-theme .form-control:focus {
+        background-color: #2b2f32;
+        border-color: #80bdff;
+        color: #fff;
+    }
+
+    body.dark-theme .form-control::placeholder {
+        color: #868e96;
+    }
+
+    body.dark-theme .form-control-file {
+        color: #e9ecef;
+    }
+
+    body.dark-theme .custom-file-label {
+        background-color: #2b2f32;
+        border-color: #495057;
+        color: #e9ecef;
+    }
+</style>
+{% endblock %}
