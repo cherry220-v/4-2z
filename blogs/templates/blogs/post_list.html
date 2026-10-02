@@ -32,7 +32,7 @@
             </div>
 
             {% if user.is_authenticated %}
-                <a href="{% url 'post_create' %}"
+                <a href="{% url 'blogs-post-create' %}"
                    class="btn btn-primary">
                     <i class="fas fa-plus mr-1"></i>
                     Создать пост
@@ -92,7 +92,7 @@
                             <div class="dropdown-menu dropdown-menu-right">
 
                                 <a class="dropdown-item"
-                                   href="{% url 'post_detail' post.pk %}">
+                                   href="{% url 'blogs-post-detail' post.pk %}">
                                     <i class="fas fa-external-link-alt mr-2"></i>
                                     Открыть пост
                                 </a>
@@ -100,13 +100,13 @@
                                 {% if user == post.owner %}
 
                                     <a class="dropdown-item"
-                                       href="{% url 'post_edit' post.pk %}">
+                                       href="{% url 'blogs-post-edit' post.pk %}">
                                         <i class="fas fa-edit mr-2"></i>
                                         Редактировать
                                     </a>
 
                                     <a class="dropdown-item text-danger"
-                                       href="{% url 'post_delete' post.pk %}">
+                                       href="{% url 'blogs-post-delete' post.pk %}">
                                         <i class="fas fa-trash mr-2"></i>
                                         Удалить
                                     </a>
@@ -151,7 +151,7 @@
 
                             {% for hashtag in post.hashtags.all %}
 
-                                <a href="{% url 'hashtag-posts' hashtag.slug %}"
+                                <a href="{% url 'blogs-post-hashtag' hashtag.slug %}"
                                    class="badge badge-primary mr-1 p-2">
 
                                     <i class="fas fa-hashtag"></i>{{ hashtag.text }}
@@ -230,7 +230,7 @@
 
 
                         <!-- Комментарии -->
-                        <a href="{% url 'post_detail' post.pk %}#comments"
+                        <a href="{% url 'blogs-post-detail' post.pk %}#comments"
                            class="btn btn-sm btn-outline-secondary mr-2">
 
                             <i class="far fa-comment mr-1"></i>

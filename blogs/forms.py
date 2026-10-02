@@ -2,9 +2,12 @@ from django import forms
 
 from .models import BlogPost
 
+class MultipleFileInput(forms.ClearableFileInput):
+    allow_multiple_selected = True
+
 class PostForm(forms.ModelForm):
     files = forms.FileField(
-        widget=forms.ClearableFileInput(attrs={
+        widget=MultipleFileInput(attrs={
             'multiple': True,
             'class': 'form-control-file'
         }),
@@ -14,10 +17,11 @@ class PostForm(forms.ModelForm):
 
     class Meta:
         model = BlogPost
-        fields = ('title', 'content')
+        fields = ('title', 'text', 'is_published')
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
-            'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
+            'text': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
+            'is_published': forms.CheckboxInput(attrs={'class': 'custom-control-input', "checked": "True"}),
         }
 
     def clean_files(self):

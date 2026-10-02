@@ -1,0 +1,326 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title|default:"Создание поста" }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+
+            <div class="card post-create-card shadow-sm">
+
+                <div class="card-header post-create-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-pen mr-2"></i>
+                        Создание поста
+                    </h4>
+                </div>
+
+                <div class="card-body">
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <!-- Заголовок -->
+                        <div class="form-group">
+                            <label for="{{ form.title.id_for_label }}">
+                                {{ form.title.label }}
+                            </label>
+
+                            {{ form.title }}
+
+                            {% if form.title.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.title.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Текст -->
+                        <div class="form-group">
+                            <label for="{{ form.text.id_for_label }}">
+                                {{ form.text.label }}
+                            </label>
+
+                            {{ form.text }}
+
+                            {% if form.text.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.text.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Файлы -->
+                        <div class="form-group">
+                            <label for="{{ form.files.id_for_label }}">
+                                {{ form.files.label }}
+                            </label>
+
+                            {{ form.files }}
+
+                            {% if form.files.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.files.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            <small class="form-text text-muted">
+                                Можно прикрепить до 10 файлов.
+                            </small>
+                        </div>
+
+                        <!-- Выбранные файлы -->
+                        <div id="selectedFiles" class="selected-files d-none">
+                            <div class="selected-files-title">
+                                <i class="fas fa-paperclip mr-1"></i>
+                                Выбранные файлы:
+                            </div>
+
+                            <ul id="selectedFilesList" class="selected-files-list mb-0"></ul>
+                        </div>
+
+                        <!-- Статус публикации -->
+                        <div class="custom-control custom-checkbox">
+                            {{ form.is_published }}
+
+                            <label
+                                class="custom-control-label"
+                                for="{{ form.is_published.id_for_label }}"
+                            >
+                                Опубликовать пост
+                            </label>
+                        </div>
+
+                            {% if form.is_published.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.is_published.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <hr>
+
+                        <!-- Кнопки -->
+                        <div class="post-create-actions">
+                            <a href="{% url 'blogs-post-list' %}" class="btn btn-secondary">
+                                <i class="fas fa-times mr-1"></i>
+                                Отмена
+                            </a>
+
+                            <button type="submit" class="btn btn-primary" id="submitButton">
+                                <i class="fas fa-paper-plane mr-1"></i>
+                                <span id="submitButtonText">Опубликовать</span>
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block extra_css %}
+<style>
+    .post-create-card {
+        background-color: #fff;
+        color: #212529;
+        border: 1px solid #dee2e6;
+        border-radius: .5rem;
+        transition:
+            background-color .2s ease,
+            border-color .2s ease,
+            color .2s ease;
+    }
+
+    .post-create-header {
+        background-color: #fff;
+        color: #212529;
+        border-bottom: 1px solid #dee2e6;
+        transition:
+            background-color .2s ease,
+            border-color .2s ease,
+            color .2s ease;
+    }
+
+    .post-create-card label {
+        font-weight: 500;
+    }
+
+    .post-create-card .form-control {
+        transition:
+            background-color .2s ease,
+            border-color .2s ease,
+            color .2s ease;
+    }
+
+    .post-create-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .selected-files {
+        margin-top: 12px;
+        padding: 12px 15px;
+        border: 1px solid #dee2e6;
+        border-radius: .375rem;
+        background-color: #f8f9fa;
+    }
+
+    .selected-files-title {
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
+
+    .selected-files-list {
+        padding-left: 20px;
+    }
+
+    .selected-files-list li {
+        margin-bottom: 3px;
+        word-break: break-word;
+    }
+
+
+    /* =========================
+       DARK THEME
+       ========================= */
+
+    body.dark-theme .post-create-card {
+        background-color: #242628;
+        color: #e9ecef;
+        border-color: #343a40;
+    }
+
+    body.dark-theme .post-create-header {
+        background-color: #242628;
+        color: #e9ecef;
+        border-bottom-color: #343a40;
+    }
+
+    body.dark-theme .post-create-card .form-control {
+        background-color: #2b2f32;
+        border-color: #495057;
+        color: #e9ecef;
+    }
+
+    body.dark-theme .post-create-card .form-control:focus {
+        background-color: #2b2f32;
+        border-color: #80bdff;
+        color: #fff;
+    }
+
+    body.dark-theme .post-create-card .form-control::placeholder {
+        color: #868e96;
+    }
+
+    body.dark-theme .post-create-card .form-control-file {
+        color: #e9ecef;
+    }
+
+    body.dark-theme .selected-files {
+        background-color: #2b2f32;
+        border-color: #495057;
+    }
+
+    body.dark-theme .post-create-card hr {
+        border-color: #343a40;
+    }
+</style>
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        /* =========================
+           Файлы
+           ========================= */
+
+        const fileInput = document.getElementById('{{ form.files.id_for_label }}');
+        const selectedFiles = document.getElementById('selectedFiles');
+        const selectedFilesList = document.getElementById('selectedFilesList');
+
+        if (fileInput) {
+            fileInput.addEventListener('change', function () {
+                selectedFilesList.innerHTML = '';
+
+                if (!fileInput.files.length) {
+                    selectedFiles.classList.add('d-none');
+                    return;
+                }
+
+                selectedFiles.classList.remove('d-none');
+
+                Array.from(fileInput.files).forEach(function (file) {
+                    const li = document.createElement('li');
+
+                    const size = file.size / 1024 / 1024;
+                    const sizeText = size >= 1
+                        ? size.toFixed(2) + ' МБ'
+                        : (file.size / 1024).toFixed(1) + ' КБ';
+
+                    li.textContent = file.name + ' (' + sizeText + ')';
+
+                    selectedFilesList.appendChild(li);
+                });
+            });
+        }
+
+
+        /* =========================
+           Статус публикации
+           ========================= */
+
+        const publishCheckbox =
+            document.getElementById('{{ form.is_published.id_for_label }}');
+
+        const submitButtonText =
+            document.getElementById('submitButtonText');
+
+        const submitButton =
+            document.getElementById('submitButton');
+
+        function updatePublishButton() {
+            if (publishCheckbox.checked) {
+                submitButtonText.textContent = 'Опубликовать';
+                submitButton.querySelector('i').className =
+                    'fas fa-paper-plane mr-1';
+            } else {
+                submitButtonText.textContent = 'В черновики';
+                submitButton.querySelector('i').className =
+                    'fas fa-save mr-1';
+            }
+        }
+
+        if (publishCheckbox) {
+            updatePublishButton();
+
+            publishCheckbox.addEventListener('change', updatePublishButton);
+        }
+    });
+</script>
+{% endblock %}

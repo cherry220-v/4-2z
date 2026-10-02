@@ -42,6 +42,7 @@ class BlogPost(models.Model):
     likes = models.ManyToManyField("users.User", blank=True, related_name="liked_posts", verbose_name="Лайки")
     views = models.ManyToManyField("users.User", blank=True, related_name="viewed_posts", verbose_name="Просмотры")
     reports = models.ManyToManyField("blogs.ReportReason", blank=True, related_name="report_posts", verbose_name="Жалобы")
+    is_published = models.BooleanField(verbose_name="Опубликовано", default=False)
 
     created_at = models.DateTimeField(verbose_name="Дата создания", auto_now=True)
     updated_at = models.DateTimeField(verbose_name="Дата изменения", null=True)
@@ -52,7 +53,25 @@ class BlogPost(models.Model):
 
     def __str__(self):
         return self.title
-    
+
+class Draft(models.Model):
+    post = models.OneToOneField(
+        "blogs.BlogPost",
+        on_delete=models.CASCADE,
+        related_name="draft",
+        verbose_name="Пост"
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Дата создания"
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name="Дата изменения"
+    )
+
 class File(models.Model):
     post = models.ForeignKey("blogs.BlogPost", on_delete=models.CASCADE)
     title = models.CharField(max_length=50, null=False, verbose_name="Заголовок файла")

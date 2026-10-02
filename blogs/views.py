@@ -1,13 +1,12 @@
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http.response import JsonResponse, HttpResponse
 from django.views import View
 from django.utils import timezone
 from django.db.models import Count, ExpressionWrapper, FloatField, F
 from datetime import timedelta
 
 from .models import Hashtag, BlogPost
-from .serializers import BlogPostSerializer
+from .forms import PostForm
 
 class Feed(View):
     model = BlogPost
@@ -37,7 +36,7 @@ class Feed(View):
 
     def get(self, request):
         self.object_list = self.get_queryset()
-        return render(request=self.request, template_name="blogs/posts_list.html", context={"page_title": "Лента", "posts": self.object_list})
+        return render(request=self.request, template_name="blogs/post_list.html", context={"page_title": "Лента", "posts": self.object_list})
 
 class HashtagPosts(View):
 
@@ -82,3 +81,10 @@ class HashtagPosts(View):
             'blogs/posts_list.html',
             context
         )
+
+class CreatePost(View):
+    model = BlogPost
+
+    def get(self, request):
+        form = PostForm()
+        return render(request=request, template_name="blogs/post_create.html", context={"page_title": "Создать пост", "form": form})

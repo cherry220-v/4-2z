@@ -10,7 +10,7 @@ User = get_user_model()
 class RegisterView(View):
     def get(self, request):
         if request.user.is_authenticated:
-            return redirect('posts-list')
+            return redirect('blogs-post-list')
         return render(request, 'users/register.html')
 
     def post(self, request):
@@ -38,7 +38,7 @@ class RegisterView(View):
             try:
                 user = User.objects.create_user(email=email, username=username, password=password)
                 login(request, user)
-                return redirect('posts-list')
+                return redirect('blogs-post-list')
             except Exception as e:
                 context['error'] = f"Ошибка при регистрации"
                 return render(request, 'users/register.html', context)
@@ -46,7 +46,7 @@ class RegisterView(View):
 class LoginView(View):
     def get(self, request):
         if request.user.is_authenticated:
-            return redirect('posts-list')
+            return redirect('blogs-post-list')
         form = LoginForm()
         return render(request, 'users/login.html', context={"form": form})
 
@@ -60,7 +60,7 @@ class LoginView(View):
             if user is not None:
                 login(request, user)
                 next_url = request.GET.get('next')
-                return redirect(next_url if next_url else "posts-list")
+                return redirect(next_url if next_url else "blogs-post-list")
             else:
                 error = "Неверный email или пароль"
                 return render(request, 'users/login.html', {'error': error, 'email': email})
@@ -76,7 +76,7 @@ class ProfileView(View):
         if form.is_valid():
             form.save()
 
-            return redirect("profile")
+            return redirect("users-profile")
         return render(request=request, template_name="users/profile.html", context={"page_title": "Профиль", "form": form, "user": user})
 
 @require_POST

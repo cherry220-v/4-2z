@@ -11,11 +11,16 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 from pathlib import Path
+from celery.schedules import crontab
+from dotenv import load_dotenv
 import os
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv(BASE_DIR / ".env")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
@@ -133,3 +138,30 @@ MAILERS = {
 }
 
 AUTH_USER_MODEL = 'users.User'
+
+# CELERY SETTINGS
+
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND")
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = "Europe/Moscow"
+
+CELERY_BEAT_SCHEDULE = {
+    # "daily-statistics": {
+    #     "task": "blogs.tasks.generate_daily_statistics",
+    #     "schedule": crontab(hour=0, minute=0),
+    # },
+}
+
+# REDIS SETTINGS
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "django-local-cache",
+    },
+}
+
+REDIS_URL = os.environ.get("REDIS_URL")
