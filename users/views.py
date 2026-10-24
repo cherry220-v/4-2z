@@ -82,4 +82,4 @@ class ProfileView(View):
 @require_POST
 def logout(request):
     django_logout(request)
-    return redirect('login')
+    return redirect('users-login')

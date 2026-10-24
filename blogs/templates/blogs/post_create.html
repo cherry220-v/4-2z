@@ -84,6 +84,15 @@
                             </small>
                         </div>
 
+                        <div class="form-group">
+                            <label for="{{ form.hashtags.id_for_label }}">
+                                {{ form.hashtags.label }}
+                            </label>
+
+                            {{ form.hashtags }}
+
+                        </div>
+
                         <!-- Выбранные файлы -->
                         <div id="selectedFiles" class="selected-files d-none">
                             <div class="selected-files-title">
@@ -131,6 +140,7 @@
                         </div>
 
                     </form>
+                    {{ form.media.js }}
 
                 </div>
             </div>
@@ -139,7 +149,6 @@
     </div>
 </div>
 {% endblock %}
-
 
 {% block extra_css %}
 <style>

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title|default:"Пост" }}{% endblock %}
+
+{% block content %}
+{{ post.title }}
+<br>
+{{ post.text }}
+<br>
+{{ post.views_cnt }}
+<br>
+{{ post.likes_cnt }}
+<br>
+{{ post.owner.username }}
+<br>
+<form id="comment-form" method="POST" action="{% url 'blogs-comment-create' post.pk %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Отправка на сво</button>
+</form>
+
+{% for cmt in comments %}
+    {{ cmt.creator.username }}
+    <br>
+    {{ cmt.text }}
+    <br>
+    <br>
+{% endfor %}
+
+<script>
+document.getElementById('comment-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const form = this;
+    const formData = new FormData(form);
+
+    fetch(form.action || window.location.href, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest', 
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        if (data.success) {
+            alert('Комментарий успешно добавлен!');
+            form.reset();
+            
+        } else {
+            alert('Ошибка: ' + JSON.stringify(data.errors));
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка AJAX:', error);
+    });
+});
+</script>
+{% endblock %}

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'blogs',
     'bootstrap4',
     'rest_framework',
+    'django_select2',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -162,6 +163,10 @@ CACHES = {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
         "LOCATION": "django-local-cache",
     },
+    "select2": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    }
 }
+SELECT2_CACHE_BACKEND = "select2"
 
 REDIS_URL = os.environ.get("REDIS_URL")
