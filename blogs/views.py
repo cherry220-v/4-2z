@@ -23,13 +23,16 @@ class Feed(ListView):
     
     def get_queryset(self):
         time_threshold = timezone.now() - timedelta(days=7)
-        
-        queryset = ( 
-            BlogPost.objects
-            .filter(created_at__gte=time_threshold, is_published=True)
-            .select_related('owner')
-            .prefetch_related('hashtags', 'files')
-        )
+
+        queryset = BlogPost.objects.filter(created_at__gte=time_threshold, is_published=True)
+        if queryset.count() > 0:
+                queryset = (queryset.select_related('owner').prefetch_related('hashtags', 'files'))
+        else:            
+            queryset = (
+                BlogPost.objects
+                .select_related('owner')
+                .prefetch_related('hashtags', 'files')
+            )
         
         return queryset.order_by('-created_at')
 
@@ -218,16 +221,20 @@ def track_view_ajax(request, post_id):
         'views_count': counts.get('views', 0)
     })
 
-@login_required
 @require_POST
 def toggle_like_ajax(request, post_id):
-    post = get_object_or_404(BlogPost, id=post_id)
-    
-    is_liked = like_post(post_id=post.id, user_id=request.user.id)
-    counts = get_post_stats(post_id=post.id)
-    
-    return JsonResponse({
-        'status': 'success',
-        'is_liked': is_liked,
-        'likes_count': counts.get('likes', 0)
-    })
+    if request.user.is_authenticated:
+        post = get_object_or_404(BlogPost, pk=post_id)
+        
+        is_liked = like_post(post_id=post.id, user_id=request.user.id)
+        counts = get_post_stats(post_id=post.id)
+        
+        return JsonResponse({
+            'status': 'success',
+            'is_liked': is_liked,
+            'likes_count': counts.get('likes', 0)
+        })
+    return JsonResponse(
+        {"status": "error", "message": "Пожалуйста, войдите в аккаунт"},
+        status=401,
+    )

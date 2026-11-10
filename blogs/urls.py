@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import Feed, HashtagPosts, CreatePost, PostDetail, PostDelete, PostEdit
+from .views import Feed, HashtagPosts, CreatePost, PostDetail, PostDelete, PostEdit, track_view_ajax, toggle_like_ajax
 
 urlpatterns = [
     path('tag/<slug:slug>/', HashtagPosts.as_view(), name='blogs-post-hashtag'),
@@ -13,9 +13,9 @@ urlpatterns = [
     path('<int:pk>/delete/', PostDelete.as_view(),   name='blogs-post-delete'),
     path('<int:pk>/report/', Feed.as_view(),         name='blogs-post-report'),
 
-    path('<int:pk>/comment/', PostDetail.as_view(),        name='blogs-comment-create'),
+    path('<int:pk>/comment/', PostDetail.as_view(),  name='blogs-comment-create'),
     path('comment/<int:cid>/delete/', Feed.as_view(),name='blogs-comment-delete'),
 
-    path('<int:pk>/view/', Feed.as_view(),           name='blogs-post-like'),
-    path('<int:pk>/like/', Feed.as_view(),           name='blogs-post-view'),
+    path('<int:pk>/view/', track_view_ajax,          name='blogs-post-view'),
+    path('<int:pk>/like/', toggle_like_ajax,         name='blogs-post-like'),
 ]
